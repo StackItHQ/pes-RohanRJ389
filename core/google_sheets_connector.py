@@ -8,8 +8,7 @@ from google.oauth2 import service_account
 from config.config import Config
 
 # Path to your credentials file
-CREDENTIALS_FILE = "path/to/credentials.json"
-
+CREDENTIALS_FILE = "config/credentials.json"
 
 def get_sheets_service():
     """
@@ -21,7 +20,6 @@ def get_sheets_service():
     )
     service = build("sheets", "v4", credentials=creds)
     return service
-
 
 def get_sheet_data(sheet_id, range_name):
     """
