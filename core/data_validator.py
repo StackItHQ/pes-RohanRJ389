@@ -1,19 +1,31 @@
-# core/data_validator.py
+from datetime import datetime
 
-def validate_data(row):
-    """
-    Validates a row of data to ensure it meets the criteria for insertion into the database.
-    This is a simple example; modify as needed for your data.
-    """
-    if len(row) != 2:  # Assuming you have 2 columns, modify as necessary
-        return False
 
-    # Validate data types (e.g., first column is a string, second column is a number)
-    if not isinstance(row[0], str):
-        return False
+def validate_date(date_str):
+    """
+    Validate and convert a date string to MySQL-compatible format (YYYY-MM-DD).
+    Supports date formats like 'Sep 14'.
+    Returns the converted date if valid, else None.
+    """
     try:
-        float(row[1])
+        # Try to parse the date assuming format like 'Sep 14' (no year)
+        date_obj = datetime.strptime(date_str, "%b %d")
+        # Add current year if the year is missing
+        date_obj = date_obj.replace(year=datetime.now().year)
+        return date_obj.strftime("%Y-%m-%d")
     except ValueError:
-        return False
+        print(f"Invalid date format: {date_str}")
+        return None
 
-    return True
+
+def validate_status(status_str):
+    """
+    Validate status string ('TRUE'/'FALSE') and convert it to boolean.
+    """
+    if status_str == "TRUE":
+        return True
+    elif status_str == "FALSE":
+        return False
+    else:
+        print(f"Invalid status value: {status_str}")
+        return None
