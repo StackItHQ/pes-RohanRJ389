@@ -1,6 +1,6 @@
-.env
+
 Notes.txt
 req.txt
 config/credentials.json
 requirements.txt
-.venv
+logs/db_changes.log
