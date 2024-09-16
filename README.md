@@ -61,21 +61,9 @@ All the best ✨.
 ## Developer's Section
 <!-- *Add your video here, and your approach to the problem (optional). Leave some comments for us here if you want, we will be reading this :)* -->
 
-Here's a comprehensive `README.md` for your project, including a detailed approach and instructions for setup and running the application. I've included placeholders for the video link and a brief overview of your approach.
 
----
 
-# Real-Time Synchronization Between Google Sheets and Database
 
-Welcome to Superjoin's hiring assignment! 🚀
-
-## Objective
-
-The goal of this project is to build a solution that enables real-time synchronization of data between a Google Sheet and a specified database (e.g., MySQL). The solution detects changes in the Google Sheet and updates the database accordingly, and vice versa.
-
-## Problem Statement
-
-Many businesses use Google Sheets for collaborative data management and databases for more robust and scalable data storage. However, keeping data synchronized between Google Sheets and databases is often a manual and error-prone process. This solution automates this synchronization, ensuring changes in one are reflected in the other in real-time.
 
 ## Requirements
 
@@ -89,11 +77,7 @@ Many businesses use Google Sheets for collaborative data management and database
 - Supported Create, Read, Update, and Delete operations for both Google Sheets and the database.
 - Maintained data consistency across both platforms.
 
-### Optional Challenges (Not Implemented)
-
-- Conflict Handling: Developed a strategy to handle conflicts arising from simultaneous changes in Google Sheets and the database. (Note: This feature is not included in the current implementation.)
-
-### Scalability
+### Optional Challenge: Scalability
 
 - Ensured the solution can handle large datasets and high-frequency updates without performance degradation.
 - Optimized for scalability and efficiency.
@@ -130,19 +114,19 @@ Many businesses use Google Sheets for collaborative data management and database
    cd <repository-directory>
    ```
 
-2. **Create and Activate a Virtual Environment**:
+<!-- 2. **Create and Activate a Virtual Environment**:
    ```bash
    python -m venv venv
    source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-   ```
+   ``` -->
 
-3. **Install Dependencies**:
+2. **Install Dependencies**:
    ```bash
    pip install -r requirements.txt
    ```
 
-4. **Configure Environment Variables**:
-   - Create a `.env` file in the root directory with the following content:
+3. **Configure Environment Variables**:
+   - Update the necessary details in  `.env` file in the root directory with the following content:
      ```
      GOOGLE_SHEET_ID=<your-google-sheet-id>
      DB_HOST=<database-host>
@@ -151,8 +135,8 @@ Many businesses use Google Sheets for collaborative data management and database
      DB_NAME=<database-name>
      ```
 
-5. **Set Up Google Sheets API**:
-   - Place `credentials.json` in the root directory.
+4. **Set Up Google Sheets API**:
+   - Update your API credentials in `config\credentials.json` 
 
 6. **Run Flask Application with Ngrok**:
    - Start the Flask application:
