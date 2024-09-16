@@ -275,8 +275,9 @@ def remove_column_from_db(column_name):
         connection.commit()
         cursor.close()
         connection.close()
-
+        get_sheet_data()
         print(f"Column '{column_name}' removed successfully.")
 
     except Exception as e:
         print(f"Error removing column: {e}")
+
