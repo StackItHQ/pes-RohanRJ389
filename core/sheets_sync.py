@@ -8,13 +8,16 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 SHEET_RANGE = "Sheet1!A1:Z1000"  # Adjust range to the size of your sheet
 
+
 def sync_sheet_to_db():
     """
     Sync the entire Google Sheet with the MySQL database.
     The first row in the sheet is treated as column names.
     """
-    sheet_data = get_sheet_data(sheet_id=os.getenv("GOOGLE_SHEET_ID"), range_name=SHEET_RANGE)
-    
+    sheet_data = get_sheet_data(
+        sheet_id=os.getenv("GOOGLE_SHEET_ID"), range_name=SHEET_RANGE
+    )
+
     if not sheet_data or len(sheet_data) < 2:
         print("No data found in the sheet, or the sheet is empty.")
         return
@@ -43,26 +46,28 @@ def sync_sheet_to_db():
     cursor.execute(create_table_query)
 
     # Insert data (starting from the second row since the first row is the header)
-    for i, row_data in enumerate(sheet_data[1:], start=2):  # Start at 2 to match Google Sheet row numbers
-    # Pad row_data with None (NULL in SQL) if it's shorter than the number of columns
-      while len(row_data) < len(column_names):
-          row_data.append(None)
+    for i, row_data in enumerate(
+        sheet_data[1:], start=2
+    ):  # Start at 2 to match Google Sheet row numbers
+        # Pad row_data with None (NULL in SQL) if it's shorter than the number of columns
+        while len(row_data) < len(column_names):
+            row_data.append(None)
 
-      # Insert the data into the table
-      values = [f"'{value}'" if value else "NULL" for value in row_data]
-      insert_query = f"""
+        # Insert the data into the table
+        values = [f"'{value}'" if value else "NULL" for value in row_data]
+        insert_query = f"""
       INSERT INTO `{table_name}` (`row_number`, {', '.join([f'`{col}`' for col in column_names])})
       VALUES ({i}, {', '.join(values)})
       """
-      cursor.execute(insert_query)
-
+        cursor.execute(insert_query)
 
     conn.commit()
     cursor.close()
     conn.close()
 
     print("Google Sheet data successfully synced to MySQL")
-    
+
+
 def update_cell_in_db(row, column_name, new_value):
     """
     Update a specific cell in the MySQL table when the Google Sheet changes.
@@ -94,6 +99,64 @@ def update_cell_in_db(row, column_name, new_value):
         conn.close()
 
 
+def delete_row_from_db(row):
+    """
+    Delete a specific row in the MySQL table.
+    :param row: The row number to delete.
+    """
+    conn = get_db_connection()
+    if not conn:
+        print("Failed to connect to the database.")
+        return
+    cursor = conn.cursor()
 
+    table_name = "sheet1"
+    delete_query = f"""
+    DELETE FROM `{table_name}`
+    WHERE `row_number` = %s
+    """
+    try:
+        cursor.execute(delete_query, (row,))
+        conn.commit()
+        print(f"Row {row} deleted.")
+    except pymysql.MySQLError as e:
+        print(f"Error deleting row: {e}")
+    finally:
+        cursor.close()
+        conn.close()
+
+def add_row_to_db(row):
+    """
+    Add a new row to the MySQL table with data from the Google Sheet.
+    :param row: The row number to add.
+    """
+    conn = get_db_connection()
+    if not conn:
+        print("Failed to connect to the database.")
+        return
+    cursor = conn.cursor()
+
+    table_name = "sheet1"
+    sheet_data = get_sheet_data(sheet_id=os.getenv("GOOGLE_SHEET_ID"), range_name=f"Sheet1!A{row}:Z{row}")
+    row_data = sheet_data[0] if sheet_data else []
+
+    # Pad row_data with None (NULL in SQL) if it's shorter than the number of columns
+    while len(row_data) < len(column_names):
+        row_data.append(None)
+
+    values = [f"'{value}'" if value else "NULL" for value in row_data]
+    insert_query = f"""
+    INSERT INTO `{table_name}` (`row_number`, {', '.join([f'`{col}`' for col in column_names])})
+    VALUES ({row}, {', '.join(values)})
+    """
+    try:
+        cursor.execute(insert_query)
+        conn.commit()
+        print(f"Row {row} added.")
+    except pymysql.MySQLError as e:
+        print(f"Error adding row: {e}")
+    finally:
+        cursor.close()
+        conn.close()
 if __name__ == "__main__":
     sync_sheet_to_db()
