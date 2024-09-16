@@ -1,0 +1,16 @@
+2024-09-16 20:12:21,433 - New row added to database: ['', 'Hello', '']
+2024-09-16 20:12:44,741 - Row 7 deleted from database
+2024-09-16 20:14:24,973 - New column 'Status' added to database
+2024-09-16 20:14:33,909 - Cell in row 2, column 'Status' updated to ''
+2024-09-16 20:15:52,646 - Cell in row 2, column 'Status' updated to ''
+2024-09-16 20:15:59,507 - Cell in row 2, column 'Status' updated to ''
+2024-09-16 20:16:03,800 - New column 'Deadline' added to database
+2024-09-16 20:16:14,568 - Column 'Deadline' renamed to 'Description' in database
+2024-09-16 20:16:16,357 - Cell in row 2, column 'Description' updated to 'this is desc'
+2024-09-16 20:17:05,793 - Cell in row 2, column 'Sl. No.' updated to ''
+2024-09-16 20:17:09,186 - Row 2 deleted from database
+2024-09-16 20:17:35,659 - New row added to database: [1, '', '', '']
+2024-09-16 20:17:40,624 - Cell in row 2, column 'Tasks' updated to 'Delete junk from Drive'
+2024-09-16 20:17:44,209 - Cell in row 2, column 'Status' updated to ''
+2024-09-16 20:18:04,120 - Column 'Description' removed from database
+2024-09-16 20:18:26,496 - New column 'Desc' added to database
