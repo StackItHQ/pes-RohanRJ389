@@ -175,7 +175,7 @@ All the best ✨.
 
 ### Video Demo
 
-Here's a [demo video](https://drive.google.com/drive/folders/1xQ-O2TZ-53d1o_V5S1ytxvZbeFawYMUZ?usp=sharing) showcasing the working project. In the video, I walk through the entire setup process, demonstrate how the synchronization works, and discuss the biggest blocker I faced, which was ensuring real-time updates without conflicts.
+Here's a [demo video](https://drive.google.com/drive/folders/1xQ-O2TZ-53d1o_V5S1ytxvZbeFawYMUZ?usp=sharing) showcasing the working project.
 
 ### Approach Explanation
 
