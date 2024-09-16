@@ -13,7 +13,7 @@ class TestGoogleSheetsConnector(unittest.TestCase):
         Test fetching data from Google Sheets and print the content.
         """
         sheet_id = Config.GOOGLE_SHEET_ID
-        range_name = 'Sheet1!A1:C10'  # Modify range according to your sheet
+        range_name = 'Sheet1!A1:Z10'  # Modify range according to your sheet
 
         # Fetch data
         data = get_sheet_data(sheet_id, range_name)
