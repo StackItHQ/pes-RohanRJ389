@@ -241,3 +241,32 @@ def rename_column_in_db(old_column_name, new_column_name):
     finally:
         cursor.close()
         conn.close()
+
+
+def add_column_to_db(column_name):
+    # Add a new column to the existing table
+    try:
+        connection = get_db_connection()  # Get your database connection
+        cursor = connection.cursor()
+        query = f"ALTER TABLE sheet1 ADD COLUMN `{column_name}` TEXT"
+        cursor.execute(query)
+        connection.commit()
+        cursor.close()
+        connection.close()
+        print(f"Column '{column_name}' added successfully.")
+    except Exception as e:
+        print(f"Error adding column: {e}")
+
+def remove_column_from_db(column_name):
+    # Remove a column from the existing table
+    try:
+        connection = get_db_connection()  # Get your database connection
+        cursor = connection.cursor()
+        query = f"ALTER TABLE sheet1 DROP COLUMN `{column_name}`"
+        cursor.execute(query)
+        connection.commit()
+        cursor.close()
+        connection.close()
+        print(f"Column '{column_name}' removed successfully.")
+    except Exception as e:
+        print(f"Error removing column: {e}")

@@ -2,3 +2,5 @@
 Notes.txt
 req.txt
 config/credentials.json
+requirements.txt
+.venv
