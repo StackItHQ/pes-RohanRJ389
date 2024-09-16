@@ -4,7 +4,7 @@ import os, sys
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from core.google_sheets_connector import get_sheet_data
+from src.google_sheets_connector import get_sheet_data
 from config.config import Config
 
 class TestGoogleSheetsConnector(unittest.TestCase):

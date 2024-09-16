@@ -4,7 +4,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 # tests/test_db_connector.py
 
 import unittest
-from core.db_connector import get_db_connection
+from src.db_connector import get_db_connection
 
 
 class TestDBConnection(unittest.TestCase):
