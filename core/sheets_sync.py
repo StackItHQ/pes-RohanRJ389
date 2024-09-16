@@ -191,9 +191,11 @@ def add_row_to_db(row, row_data):
     try:
         cursor.execute(insert_query, [row] + row_data)
         conn.commit()
+
         print(f"Row {row} added.")
     except pymysql.MySQLError as e:
         print(f"Error adding row: {e}")
+
     finally:
         cursor.close()
         conn.close()
@@ -206,9 +208,11 @@ def rename_column_in_db(old_column_name, new_column_name):
     :param new_column_name: The new column name.
     """
     conn = get_db_connection()
+
     if not conn:
         print("Failed to connect to the database.")
         return
+
     cursor = conn.cursor()
 
     table_name = "sheet1"
@@ -238,6 +242,7 @@ def rename_column_in_db(old_column_name, new_column_name):
 
     except pymysql.MySQLError as e:
         print(f"Error renaming column: {e}")
+
     finally:
         cursor.close()
         conn.close()
@@ -254,8 +259,11 @@ def add_column_to_db(column_name):
         cursor.close()
         connection.close()
         print(f"Column '{column_name}' added successfully.")
+
     except Exception as e:
+
         print(f"Error adding column: {e}")
+
 
 def remove_column_from_db(column_name):
     # Remove a column from the existing table
@@ -267,6 +275,8 @@ def remove_column_from_db(column_name):
         connection.commit()
         cursor.close()
         connection.close()
+
         print(f"Column '{column_name}' removed successfully.")
+
     except Exception as e:
         print(f"Error removing column: {e}")

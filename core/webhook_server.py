@@ -1,12 +1,12 @@
 from flask import Flask, request, jsonify
 from sheets_sync import *
+
 app = Flask(__name__)
 
 
 @app.route("/webhook", methods=["POST"])
 def handle_webhook():
-    print("Webhook triggered")
-    print(request.json)
+
     try:
         data = request.json
         row = data["row"]
@@ -16,16 +16,10 @@ def handle_webhook():
         action = data["action"]
         row_data = data.get("row_data")  # List of all data in the row
 
-        print(f"\n{old_value} -> {new_value}\n")
         if row == 1:
             if old_value and not new_value:
                 # This indicates a column has been removed
                 remove_column_from_db(old_value)
-                
-                
-                
-                
-                
             elif old_value and new_value:
                 # This indicates a column has been renamed
                 rename_column_in_db(old_value, new_value)
