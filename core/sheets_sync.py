@@ -67,8 +67,10 @@ def sync_sheet_to_db():
 
     print("Google Sheet data successfully synced to MySQL")
 
+
 if __name__ == "__main__":
     sync_sheet_to_db()
+
 
 def update_cell_in_db(row, column_name, new_value):
     """
@@ -127,6 +129,7 @@ def delete_row_from_db(row):
         cursor.close()
         conn.close()
 
+
 def check_row_exists(row):
     """
     Check if a specific row exists in the MySQL table.
@@ -151,6 +154,8 @@ def check_row_exists(row):
     conn.close()
 
     return exists
+
+
 def add_row_to_db(row, row_data):
     """
     Add a new row to the MySQL table.
@@ -164,11 +169,11 @@ def add_row_to_db(row, row_data):
     cursor = conn.cursor()
 
     table_name = "sheet1"
-    
+
     # Fetch the column names from the database
     cursor.execute(f"SHOW COLUMNS FROM `{table_name}`")
-    columns = [col[0] for col in cursor.fetchall() if col[0] != 'row_number']
-    
+    columns = [col[0] for col in cursor.fetchall() if col[0] != "row_number"]
+
     if len(row_data) != len(columns):
         print(f"Data length mismatch: expected {len(columns)}, got {len(row_data)}")
         cursor.close()
@@ -176,13 +181,13 @@ def add_row_to_db(row, row_data):
         return
 
     # Prepare the query with actual column names
-    column_names = ', '.join([f'`{col}`' for col in columns])
-    placeholders = ', '.join(['%s'] * len(row_data))
+    column_names = ", ".join([f"`{col}`" for col in columns])
+    placeholders = ", ".join(["%s"] * len(row_data))
     insert_query = f"""
     INSERT INTO `{table_name}` (`row_number`, {column_names})
     VALUES (%s, {placeholders})
     """
-    
+
     try:
         cursor.execute(insert_query, [row] + row_data)
         conn.commit()
@@ -193,3 +198,46 @@ def add_row_to_db(row, row_data):
         cursor.close()
         conn.close()
 
+
+def rename_column_in_db(old_column_name, new_column_name):
+    """
+    Rename a column in the MySQL table if it exists.
+    :param old_column_name: The current column name.
+    :param new_column_name: The new column name.
+    """
+    conn = get_db_connection()
+    if not conn:
+        print("Failed to connect to the database.")
+        return
+    cursor = conn.cursor()
+
+    table_name = "sheet1"
+
+    try:
+        # Check if the column exists
+        check_column_query = f"""
+        SELECT COLUMN_NAME
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_NAME = '{table_name}' AND COLUMN_NAME = '{old_column_name}'
+        """
+        cursor.execute(check_column_query)
+        result = cursor.fetchone()
+
+        if not result:
+            print(f"Column '{old_column_name}' does not exist in table '{table_name}'.")
+            return
+
+        # Proceed to rename the column
+        rename_query = f"""
+        ALTER TABLE `{table_name}`
+        CHANGE COLUMN `{old_column_name}` `{new_column_name}` TEXT
+        """
+        cursor.execute(rename_query)
+        conn.commit()
+        print(f"Column '{old_column_name}' renamed to '{new_column_name}'.")
+
+    except pymysql.MySQLError as e:
+        print(f"Error renaming column: {e}")
+    finally:
+        cursor.close()
+        conn.close()
