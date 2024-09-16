@@ -67,6 +67,8 @@ def sync_sheet_to_db():
 
     print("Google Sheet data successfully synced to MySQL")
 
+if __name__ == "__main__":
+    sync_sheet_to_db()
 
 def update_cell_in_db(row, column_name, new_value):
     """
@@ -125,10 +127,35 @@ def delete_row_from_db(row):
         cursor.close()
         conn.close()
 
-def add_row_to_db(row):
+def check_row_exists(row):
     """
-    Add a new row to the MySQL table with data from the Google Sheet.
+    Check if a specific row exists in the MySQL table.
+    :param row: The row number to check.
+    :return: True if the row exists, otherwise False.
+    """
+    conn = get_db_connection()
+    if not conn:
+        print("Failed to connect to the database.")
+        return False
+    cursor = conn.cursor()
+
+    table_name = "sheet1"
+    check_query = f"""
+    SELECT COUNT(*) FROM `{table_name}`
+    WHERE `row_number` = %s
+    """
+    cursor.execute(check_query, (row,))
+    exists = cursor.fetchone()[0] > 0
+
+    cursor.close()
+    conn.close()
+
+    return exists
+def add_row_to_db(row, row_data):
+    """
+    Add a new row to the MySQL table.
     :param row: The row number to add.
+    :param row_data: The data to insert into the new row.
     """
     conn = get_db_connection()
     if not conn:
@@ -137,20 +164,27 @@ def add_row_to_db(row):
     cursor = conn.cursor()
 
     table_name = "sheet1"
-    sheet_data = get_sheet_data(sheet_id=os.getenv("GOOGLE_SHEET_ID"), range_name=f"Sheet1!A{row}:Z{row}")
-    row_data = sheet_data[0] if sheet_data else []
+    
+    # Fetch the column names from the database
+    cursor.execute(f"SHOW COLUMNS FROM `{table_name}`")
+    columns = [col[0] for col in cursor.fetchall() if col[0] != 'row_number']
+    
+    if len(row_data) != len(columns):
+        print(f"Data length mismatch: expected {len(columns)}, got {len(row_data)}")
+        cursor.close()
+        conn.close()
+        return
 
-    # Pad row_data with None (NULL in SQL) if it's shorter than the number of columns
-    while len(row_data) < len(column_names):
-        row_data.append(None)
-
-    values = [f"'{value}'" if value else "NULL" for value in row_data]
+    # Prepare the query with actual column names
+    column_names = ', '.join([f'`{col}`' for col in columns])
+    placeholders = ', '.join(['%s'] * len(row_data))
     insert_query = f"""
-    INSERT INTO `{table_name}` (`row_number`, {', '.join([f'`{col}`' for col in column_names])})
-    VALUES ({row}, {', '.join(values)})
+    INSERT INTO `{table_name}` (`row_number`, {column_names})
+    VALUES (%s, {placeholders})
     """
+    
     try:
-        cursor.execute(insert_query)
+        cursor.execute(insert_query, [row] + row_data)
         conn.commit()
         print(f"Row {row} added.")
     except pymysql.MySQLError as e:
@@ -158,5 +192,4 @@ def add_row_to_db(row):
     finally:
         cursor.close()
         conn.close()
-if __name__ == "__main__":
-    sync_sheet_to_db()
+

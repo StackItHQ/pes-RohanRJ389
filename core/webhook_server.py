@@ -1,7 +1,8 @@
 from flask import Flask, request, jsonify
-from sheets_sync import update_cell_in_db, sync_sheet_to_db, delete_row_from_db
+from sheets_sync import sync_sheet_to_db,update_cell_in_db,add_row_to_db,delete_row_from_db,check_row_exists
 
 app = Flask(__name__)
+
 
 
 @app.route("/webhook", methods=["POST"])
@@ -14,14 +15,23 @@ def handle_webhook():
         column_name = data["column_name"]
         new_value = data["new_value"]
         action = data["action"]
-
+        row_data = data.get('row_data')  # List of all data in the row
+        
         if action == "delete":
             delete_row_from_db(row)
         elif action == "update":
-            update_cell_in_db(row, column_name, new_value)
+            if check_row_exists(row):
+                update_cell_in_db(row, column_name, new_value)
+            else:
+                try:
+                    add_row_to_db(row,row_data)
+                    
+                except:
+                    print("add failed")
         else:
             print(f"Unknown action: {action}")
-        return jsonify({'status': 'success'}), 200
+
+        return jsonify({"status": "success"}), 200
     except Exception as e:
         print(f"Error handling webhook: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
